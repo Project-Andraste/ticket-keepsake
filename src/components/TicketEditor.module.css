@@ -126,6 +126,27 @@
 	background-color: #45a049;
 }
 
+.barcodeSection {
+	margin-top: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.barcodeSection label {
+	font-size: 0.9rem;
+	color: #444;
+}
+
+.barcodeInput {
+	padding: 0.5rem;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 14px;
+	width: 100%;
+	max-width: 400px;
+}
+
 /* モバイル対応 */
 @media (max-width: 768px) {
 	.container {

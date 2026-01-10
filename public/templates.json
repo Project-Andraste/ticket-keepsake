@@ -1,16 +1,25 @@
 [
 	{
-		"id": "tt-7ticket",
-		"name": "7-Ticket",
-		"svgPath": "/tt-7ticket.svg",
-		"width": 12.8,
-		"height": 7.5
-	},
-	{
 		"id": "tt-lticket",
 		"name": "L-Ticket",
 		"svgPath": "/tt-lticket.svg",
 		"width": 14.1,
-		"height": 6.1
+		"height": 6.1,
+		"barcodeOptions": {
+			"width": 1,
+			"marginBottom": 2,
+			"fontSize": 11
+		}
+	},
+	{
+		"id": "tt-7ticket",
+		"name": "7-Ticket",
+		"svgPath": "/tt-7ticket.svg",
+		"width": 12.8,
+		"height": 7.5,
+		"barcodeOptions": {
+			"width": 2,
+			"marginBottom": 1
+		}
 	}
 ]

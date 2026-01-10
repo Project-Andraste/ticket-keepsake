@@ -35,6 +35,10 @@ export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber
 		onUpdate({ ...ticket, templateType: newTemplate });
 	};
 
+	const handleBarcodeChange = (value: string) => {
+		onUpdate({ ...ticket, barcode: value });
+	};
+
 	return (
 		<div className={styles.container} data-ticket-id={ticket.id}>
 			<div className={styles.header}>
@@ -74,6 +78,19 @@ export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber
 					<button onClick={handleAddLine} className={styles.addButton}>
 						+ 行を追加
 					</button>
+
+					<h3 style={{ marginTop: '2rem' }}>バーコード</h3>
+					<div className={styles.barcodeSection}>
+						<label htmlFor={`barcode-${ticket.id}`}>バーコード値 (Code128):</label>
+						<input
+							id={`barcode-${ticket.id}`}
+							type="text"
+							value={ticket.barcode || ''}
+							onChange={(e) => handleBarcodeChange(e.target.value)}
+							placeholder="例: 1234567890"
+							className={styles.barcodeInput}
+						/>
+					</div>
 				</div>
 			</div>
 		</div>

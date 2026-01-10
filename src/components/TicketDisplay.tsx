@@ -1,3 +1,4 @@
+import JsBarcode from 'jsbarcode';
 import React, { useEffect, useMemo, useRef } from 'react';
 import type { TemplateWithSvg, Ticket } from '../types';
 import styles from './TicketDisplay.module.css';
@@ -14,6 +15,14 @@ interface TextAreaBounds {
 	height: number;
 }
 
+interface BarcodeBounds {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+	rotation: number; // 回転角度（度）
+}
+
 // CSS準拠のスケール: 1cm = 96px / 2.54 ≈ 37.79527559px
 const CANVAS_SCALE = 96 / 2.54;
 
@@ -22,7 +31,7 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	// テンプレート情報とSVG関連データをメモ化
-	const { templateInfo, svgUrl, svgContent, textAreaBounds } = useMemo(() => {
+	const { templateInfo, svgUrl, svgContent, textAreaBounds, barcodeBounds } = useMemo(() => {
 		const template = templatesWithSvg.find((t) => t.id === ticket.templateType);
 		if (!template) {
 			return {
@@ -30,6 +39,7 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 				svgUrl: '',
 				svgContent: '',
 				textAreaBounds: null,
+				barcodeBounds: null,
 			};
 		}
 
@@ -51,11 +61,29 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 			};
 		}
 
+		// バーコード領域の情報を抽出
+		const barcodeElement = svgDoc.querySelector('.editable.barcode');
+		let barcBounds: BarcodeBounds | null = null;
+		if (barcodeElement) {
+			const transform = barcodeElement.getAttribute('transform') || '';
+			const rotateMatch = transform.match(/rotate\((-?\d+(?:\.\d+)?)\)/);
+			const rotation = rotateMatch ? parseFloat(rotateMatch[1]) : 0;
+
+			barcBounds = {
+				x: parseFloat(barcodeElement.getAttribute('x') || '0'),
+				y: parseFloat(barcodeElement.getAttribute('y') || '0'),
+				width: parseFloat(barcodeElement.getAttribute('width') || '0'),
+				height: parseFloat(barcodeElement.getAttribute('height') || '0'),
+				rotation,
+			};
+		}
+
 		return {
 			templateInfo: template,
 			svgUrl: url,
 			svgContent: template.svgContent,
 			textAreaBounds: bounds,
+			barcodeBounds: barcBounds,
 		};
 	}, [ticket.templateType, templatesWithSvg]);
 
@@ -160,9 +188,69 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 					currentY = y + fontSize + marginBottom + lineSpacing;
 				});
 			}
+
+			// バーコードを描画
+			if (barcodeBounds && ticket.barcode && ticket.barcode.trim()) {
+				ctx.save();
+
+				// 回転の中心は原点(0,0)なので、SVGと同じ変換を適用
+				const radians = (barcodeBounds.rotation * Math.PI) / 180;
+				ctx.rotate(radians);
+
+				// スケール適用後の座標
+				const barcodeX = barcodeBounds.x * CANVAS_SCALE;
+				const barcodeY = barcodeBounds.y * CANVAS_SCALE;
+				const barcodeWidth = barcodeBounds.width * CANVAS_SCALE;
+				const barcodeHeight = barcodeBounds.height * CANVAS_SCALE;
+
+				// 一時的なCanvasを使ってバーコード画像を生成
+				const tempCanvas = document.createElement('canvas');
+				try {
+					// テンプレートのバーコードオプションを取得（デフォルト値あり）
+					const barcodeOpts = templateInfo.barcodeOptions || {};
+
+					JsBarcode(tempCanvas, ticket.barcode, {
+						...barcodeOpts,
+						// 以下は固定値（上書き不可）
+						format: 'CODE128',
+						text: ticket.barcode,
+						height: barcodeHeight,
+						displayValue: true,
+						margin: 0,
+					});
+
+					// 生成されたバーコード画像のサイズ
+					const generatedWidth = tempCanvas.width;
+					const generatedHeight = tempCanvas.height;
+
+					// 横幅を8割使うことを優先しつつ、縦方向は矩形に収まる範囲で調整
+					const scaleX = (barcodeWidth * 0.8) / generatedWidth;
+					const scaleY = barcodeHeight / generatedHeight;
+					const scale = Math.min(scaleX, scaleY);
+
+					// スケール後のサイズ
+					const scaledWidth = generatedWidth * scale;
+					const scaledHeight = generatedHeight * scale;
+
+					// 中央配置のための座標計算
+					const centerX = barcodeX + (barcodeWidth - scaledWidth) / 2;
+					const centerY = barcodeY + (barcodeHeight - scaledHeight) / 2;
+
+					// 生成されたバーコード画像を中央に描画
+					ctx.drawImage(tempCanvas, centerX, centerY, scaledWidth, scaledHeight);
+				} catch (error) {
+					console.error('バーコード生成エラー:', error);
+					// エラーの場合は赤い枠を表示
+					ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
+					ctx.lineWidth = 2;
+					ctx.strokeRect(barcodeX, barcodeY, barcodeWidth, barcodeHeight);
+				}
+
+				ctx.restore();
+			}
 		};
 		svgImg.src = svgUrl;
-	}, [svgUrl, svgContent, ticket.lines, textAreaBounds, templateInfo]);
+	}, [svgUrl, svgContent, ticket.lines, ticket.barcode, textAreaBounds, barcodeBounds, templateInfo]);
 
 	return (
 		<div ref={containerRef} className={styles.container}>

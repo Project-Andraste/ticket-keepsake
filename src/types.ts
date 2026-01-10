@@ -1,3 +1,21 @@
+// バーコード生成オプション（カスタマイズ可能な部分のみ）
+export interface BarcodeOptions {
+	width?: number;
+	fontOptions?: string;
+	font?: string;
+	textAlign?: string;
+	textPosition?: string;
+	textMargin?: number;
+	fontSize?: number;
+	background?: string;
+	lineColor?: string;
+	marginTop?: number;
+	marginBottom?: number;
+	marginLeft?: number;
+	marginRight?: number;
+	flat?: boolean;
+}
+
 // チケット行のテキスト設定
 export interface TicketLine {
 	id: string;
@@ -16,6 +34,7 @@ export interface Ticket {
 	id: string;
 	templateType: string;
 	lines: TicketLine[];
+	barcode?: string;
 }
 
 // SVGテンプレート情報
@@ -25,6 +44,7 @@ export interface TemplateInfo {
 	svgPath: string;
 	width: number;
 	height: number;
+	barcodeOptions?: BarcodeOptions;
 }
 
 // SVGコンテンツを含むテンプレート情報

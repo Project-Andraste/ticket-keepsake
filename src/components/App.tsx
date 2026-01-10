@@ -8,10 +8,27 @@ import { createDefaultLine } from '../utils/ticketHelpers';
 import styles from './App.module.css';
 import { TicketEditor } from './TicketEditor';
 
+const SESSION_STORAGE_KEY = 'ticket-keepsake-data';
+
 export const App: React.FC = () => {
-	const [appState, setAppState] = useState<AppState>({
-		tickets: [],
-		templates: [],
+	const [appState, setAppState] = useState<AppState>(() => {
+		// セッションストレージから復元を試みる
+		try {
+			const saved = sessionStorage.getItem(SESSION_STORAGE_KEY);
+			if (saved) {
+				const parsed = JSON.parse(saved);
+				return {
+					tickets: parsed.tickets || [],
+					templates: [],
+				};
+			}
+		} catch (error) {
+			console.error('セッションストレージからの復元に失敗:', error);
+		}
+		return {
+			tickets: [],
+			templates: [],
+		};
 	});
 	const [templatesWithSvg, setTemplatesWithSvg] = useState<TemplateWithSvg[]>([]);
 	const [isMobile, setIsMobile] = useState(() => {
@@ -78,6 +95,20 @@ export const App: React.FC = () => {
 			mediaQuery.removeEventListener('change', handleMediaChange);
 		};
 	}, []);
+
+	// チケットデータが変更されたらセッションストレージに保存
+	useEffect(() => {
+		if (appState.tickets.length > 0) {
+			try {
+				const dataToSave = {
+					tickets: appState.tickets,
+				};
+				sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(dataToSave));
+			} catch (error) {
+				console.error('セッションストレージへの保存に失敗:', error);
+			}
+		}
+	}, [appState.tickets]);
 
 	const handleUpdateTicket = (updatedTicket: Ticket) => {
 		setAppState({

@@ -2,8 +2,14 @@
  * アプリケーション全体で使用する定数定義
  */
 
-/** CSS準拠のスケール: 1cm = 96px / 2.54 ≈ 37.79527559px */
-export const CANVAS_SCALE = 96 / 2.54;
+/** 基準スケール: 1cm = 96px / 2.54 ≈ 37.79527559px */
+const BASE_SCALE = 96 / 2.54;
+
+/** 画質向上のための倍率 */
+const SCALE_MULTIPLIER = 3;
+
+/** CSS準拠のスケールを高解像度化 */
+export const CANVAS_SCALE = BASE_SCALE * SCALE_MULTIPLIER;
 
 /** PDF生成時のA4サイズと余白設定（単位: cm） */
 export const PDF_CONFIG = {

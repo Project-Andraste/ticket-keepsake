@@ -35,6 +35,9 @@ export const drawBarcodeToCanvas = (ctx: CanvasRenderingContext2D, bounds: Barco
 		// BarcodeOptionsをRecord<string, unknown>に変換
 		const barcodeOpts = (barcodeOptions || {}) as Record<string, unknown>;
 
+		// Canvas解像度倍率を計算（基準スケールからの倍率）
+		const scaleMultiplier = CANVAS_SCALE / (96 / 2.54);
+
 		JsBarcode(tempCanvas, value, {
 			...barcodeOpts,
 			// 以下は固定値（上書き不可）
@@ -43,6 +46,7 @@ export const drawBarcodeToCanvas = (ctx: CanvasRenderingContext2D, bounds: Barco
 			height: barcodeHeight,
 			displayValue: BARCODE_CONFIG.DISPLAY_VALUE,
 			margin: BARCODE_CONFIG.MARGIN,
+			width: ((barcodeOpts.width as number) ?? 2) * scaleMultiplier, // バーの幅も倍率に応じて調整
 		});
 
 		// 生成されたバーコード画像のサイズ

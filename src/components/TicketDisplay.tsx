@@ -105,8 +105,10 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 					const marginLeft = (line.marginLeft ?? 0.2) * CANVAS_SCALE;
 					const marginRight = (line.marginRight ?? 0.2) * CANVAS_SCALE;
 
-					// フォント設定
-					const fontSize = Math.max(DEFAULT_FONT.MIN_SIZE, line.fontSize);
+					// フォント設定（CANVAS_SCALEの倍率を適用）
+					const baseFontSize = Math.max(DEFAULT_FONT.MIN_SIZE, line.fontSize);
+					const scaleMultiplier = CANVAS_SCALE / (96 / 2.54); // 倍率を計算
+					const fontSize = baseFontSize * scaleMultiplier;
 					ctx.font = `${line.bold ? 'bold ' : ''}${fontSize}px ${fontFamily}`;
 
 					// y位置は現在の基準に「上余白」を加算

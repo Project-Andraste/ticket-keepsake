@@ -8,7 +8,7 @@ interface TicketLineEditorProps {
 	onDelete: () => void;
 }
 
-const FONT_SIZE_OPTIONS = [8, 9, 10, 10.5, 11, 12, 13, 14, 15, 16, 18, 20, 24, 28, 32, 36, 40, 48];
+const FONT_SIZE_OPTIONS = [6, 7, 8, 9, 10, 10.5, 11, 12, 13, 14, 15, 16, 18, 20, 24, 28, 32, 36, 40, 48];
 const DEFAULT_FONT_SIZE = 10.5;
 
 export const TicketLineEditor: React.FC<TicketLineEditorProps> = ({ line, onUpdate, onDelete }) => {

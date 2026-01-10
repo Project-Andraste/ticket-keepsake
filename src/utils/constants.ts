@@ -29,7 +29,7 @@ export const DEFAULT_FONT = {
 	/** フォントファミリー */
 	FAMILY: "'Noto Sans JP', sans-serif",
 	/** 最小フォントサイズ (px) */
-	MIN_SIZE: 8,
+	MIN_SIZE: 6,
 	/** デフォルトのフォントサイズ (pt) */
 	DEFAULT_SIZE: 10.5,
 } as const;
@@ -69,5 +69,5 @@ export const QRCODE_CONFIG = {
 	/** QRコードの余白 */
 	MARGIN: 0,
 	/** エラー訂正レベル */
-	ERROR_CORRECTION_LEVEL: 'M' as const,
+	ERROR_CORRECTION_LEVEL: 'L' as const,
 } as const;

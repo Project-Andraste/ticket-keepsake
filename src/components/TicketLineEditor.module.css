@@ -180,12 +180,12 @@
 }
 
 .marginInput {
-	width: 50px;
+	width: 65px;
 	padding: 0.375rem 0.5rem;
 	border: 1px solid var(--color-border);
 	border-radius: var(--radius-sm);
 	font-size: 12px;
-	text-align: center;
+	text-align: right;
 	background-color: var(--color-bg-primary);
 	transition: border-color var(--transition-base);
 }

@@ -26,7 +26,98 @@
 	display: flex;
 	align-items: center;
 	gap: var(--spacing-md);
+	flex: 1;
+	min-width: 0;
+}
+
+.headerRight {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-sm);
 	flex-wrap: wrap;
+	position: relative;
+}
+
+.menuButton {
+	padding: 0.5rem 0.75rem;
+	background-color: var(--color-bg-secondary);
+	color: var(--color-text-primary);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+	font-size: 20px;
+	font-weight: 700;
+	transition: all var(--transition-base);
+	line-height: 1;
+	width: 36px;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.menuButton:hover {
+	background-color: var(--color-bg-tertiary);
+	border-color: var(--color-primary);
+}
+
+.dropdownMenu {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	margin-top: var(--spacing-xs);
+	background-color: var(--color-bg-primary);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-sm);
+	box-shadow: var(--shadow-lg);
+	z-index: 10;
+	min-width: 200px;
+	overflow: hidden;
+}
+
+.menuItem {
+	width: 100%;
+	padding: 0.75rem 1rem;
+	background: none;
+	border: none;
+	text-align: left;
+	cursor: pointer;
+	font-size: 14px;
+	color: var(--color-text-primary);
+	transition: background-color var(--transition-base);
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-sm);
+}
+
+.menuItem:hover {
+	background-color: var(--color-bg-secondary);
+}
+
+.menuItemDanger {
+	width: 100%;
+	padding: 0.75rem 1rem;
+	background: none;
+	border: none;
+	text-align: left;
+	cursor: pointer;
+	font-size: 14px;
+	color: var(--color-danger);
+	transition: background-color var(--transition-base);
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-sm);
+}
+
+.menuItemDanger:hover {
+	background-color: var(--color-danger);
+	color: white;
+}
+
+.menuDivider {
+	height: 1px;
+	background-color: var(--color-border-light);
+	margin: var(--spacing-xs) 0;
 }
 
 .title {
@@ -214,13 +305,18 @@
 		padding: var(--spacing-md);
 	}
 
-	.header {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: var(--spacing-sm);
+	.headerLeft {
+		width: 100%;
 	}
 
-	.headerLeft {
+	.headerRight {
+		flex-direction: row;
+		justify-content: flex-end;
+	}
+
+	.importButton,
+	.exportButton,
+	.deleteButton {
 		width: 100%;
 	}
 
@@ -254,7 +350,8 @@
 		padding: var(--spacing-md);
 	}
 
-	.deleteButton {
-		width: 100%;
+	.menuButton {
+		width: 36px;
+		height: 36px;
 	}
 }

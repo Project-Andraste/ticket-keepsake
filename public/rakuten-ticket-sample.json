@@ -1,0 +1,270 @@
+{
+  "templateType": "tt-7ticket",
+  "lines": [
+    {
+      "id": "eb8c782a-fd18-4dc9-80e1-134fe60d83e9",
+      "text": "☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆",
+      "fontSize": 8,
+      "bold": false,
+      "align": "center",
+      "marginTop": 0.15,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0
+    },
+    {
+      "id": "06df6731-5fdd-4a20-9a19-5a476c422d6b",
+      "text": "乃木坂46　40thSGアンダーライブ",
+      "fontSize": 10.5,
+      "bold": false,
+      "align": "center",
+      "marginTop": 0.1,
+      "marginRight": 0,
+      "marginBottom": 0.1,
+      "marginLeft": 0
+    },
+    {
+      "id": "15a63030-e702-4f42-9914-eb7cffa1acfd",
+      "text": "※入場時ご来場者全員の身分証確認実施。本人確認が出来ない場合は入場不可。",
+      "fontSize": 8,
+      "bold": false,
+      "align": "center",
+      "marginTop": 0,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0
+    },
+    {
+      "id": "105293e8-d2f2-4afa-906a-77a08907195e",
+      "text": "※全てのお客様の手荷物検査・金属探知による検査を行います。 　【特定チケット】",
+      "fontSize": 8,
+      "bold": false,
+      "align": "center",
+      "marginTop": 0.05,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0
+    },
+    {
+      "id": "f3721722-f306-4645-a251-abb04700cbbd",
+      "text": "※公演中止・延期の場合を除き、お客様のご事情等による払戻はできません。",
+      "fontSize": 8,
+      "bold": false,
+      "align": "center",
+      "marginTop": 0.05,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0
+    },
+    {
+      "id": "02bb4405-ed67-4b49-be29-1ad68fd7cf2c",
+      "text": "2025年12月21日（日）　16:30開場　18:00開演",
+      "fontSize": 10.5,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.85
+    },
+    {
+      "id": "9b828658-3394-48ae-9723-b02f4dc8f2ce",
+      "text": "日本武道館",
+      "fontSize": 10.5,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0.05,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.9
+    },
+    {
+      "id": "c06f5625-7edc-4fda-abcc-f268c20f3e6a",
+      "text": "◆主催・企画 : 乃木坂46LCC  ◆制作 : ﾗｲﾌﾞｴｸﾞｻﾞﾑ  ◆運営 : ｿｰｺﾞｰ東京",
+      "fontSize": 8,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0.05,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.9
+    },
+    {
+      "id": "4251b935-f18e-4ed4-b738-2a6ab6c00126",
+      "text": "◆協力 : ｿﾆｰ・ﾐｭｰｼﾞｯｸﾚｰﾍﾞﾙｽﾞ / ﾉｰｽﾘﾊﾞｰ",
+      "fontSize": 8,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0.05,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.9
+    },
+    {
+      "id": "721dd52d-5838-4eff-92ab-c7877bc0ca2d",
+      "text": "◆お問合せ : ﾗｲﾌﾞｴｸﾞｻﾞﾑ  https://www.liveexsam.co.jp/contanct_sakamichi/",
+      "fontSize": 8,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0.05,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.9
+    },
+    {
+      "id": "679045a0-da31-4b80-9cfa-8244a0cd5a87",
+      "text": "※3歳以上有料。2歳以下は保護者膝上に限り無料。座席が必要な場合はﾁｹｯﾄ必要。",
+      "fontSize": 8,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0.05,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.8
+    },
+    {
+      "id": "6d89fff0-31b5-44d6-b3af-0075c0641fed",
+      "text": "※客席を含む会場内の映像・写真が公開されることがあります。",
+      "fontSize": 8,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0.05,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.8
+    },
+    {
+      "id": "7cdd3478-5cfa-487e-b57e-b73b847bd954",
+      "text": "※出演者は予告なく変更になる場合がございます。予めご了承ください。",
+      "fontSize": 8,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0.05,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.8
+    },
+    {
+      "id": "e51a9308-5cb8-4f20-8f72-1ec908be9256",
+      "text": "指定席　9, 800円（税込）",
+      "fontSize": 10.5,
+      "bold": false,
+      "align": "right",
+      "marginTop": 0.15,
+      "marginRight": 0.8,
+      "marginBottom": 0,
+      "marginLeft": 0
+    },
+    {
+      "id": "2da1646a-abb8-4f8c-8531-a6f73b932e2a",
+      "text": "2階 北スタンド A列 1番",
+      "fontSize": 10.5,
+      "bold": false,
+      "align": "right",
+      "marginTop": 0.05,
+      "marginRight": 0.85,
+      "marginBottom": 0,
+      "marginLeft": 0
+    },
+    {
+      "id": "63a855be-ebfc-4e88-95a8-045b8bdbf2a0",
+      "text": "来場代表者　　　　　　　　　同行者",
+      "fontSize": 8,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.8
+    },
+    {
+      "id": "36a2dcf5-26f9-4202-ae28-883a1e88f068",
+      "text": "姓：田中　　　　　　　　　　姓：佐藤",
+      "fontSize": 8,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.8
+    },
+    {
+      "id": "3ba45ca9-0f21-4874-95bd-9751e56fd9e6",
+      "text": "名：太郎　　　　　　　　　　名：花子",
+      "fontSize": 8,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.8
+    },
+    {
+      "id": "a723d36f-baf1-403f-9293-75f5c320b483",
+      "text": "予約番号：RT0000ABCD46　【楽天チケット】",
+      "fontSize": 6,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0.1,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.8
+    },
+    {
+      "id": "5de1d611-daf7-49ad-a590-27ad1e41b8a8",
+      "text": "【無断有償譲渡禁止】来場者の氏名・連絡先を確認済/事前確認された方以外の入場はできません。",
+      "fontSize": 6,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.65
+    },
+    {
+      "id": "fa0392cf-bb19-4726-8212-efd14aa9451a",
+      "text": "発券店：セブン-イレブン　　架空店",
+      "fontSize": 6,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.65
+    },
+    {
+      "id": "498611ec-9803-44e2-adac-a0ca52aaf647",
+      "text": "引換票：　　　　　　　　　　　2025.12.21 16:30",
+      "fontSize": 6,
+      "bold": false,
+      "align": "left",
+      "marginTop": 0,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 0.65
+    },
+    {
+      "id": "a2b5868c-eb60-4aa2-b30b-b5fc18429997",
+      "text": "000000",
+      "fontSize": 6,
+      "bold": true,
+      "align": "right",
+      "marginTop": -0.32,
+      "marginRight": 3.32,
+      "marginBottom": 0,
+      "marginLeft": 0
+    },
+    {
+      "id": "e295b7ed-5adc-4fd3-9d75-6797442cc470",
+      "text": "0123456789046　　　　　　　　　　　　　　　　　　　　　  01枚/01枚中",
+      "fontSize": 6,
+      "bold": true,
+      "align": "left",
+      "marginTop": 0,
+      "marginRight": 0,
+      "marginBottom": 0,
+      "marginLeft": 1.3
+    }
+  ],
+  "barcode": "d6401234567890d"
+}

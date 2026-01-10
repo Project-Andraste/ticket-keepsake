@@ -39,7 +39,7 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 		// SVGから編集可能エリアの情報を抽出
 		const parser = new DOMParser();
 		const svgDoc = parser.parseFromString(template.svgContent, 'image/svg+xml');
-		const editableElement = svgDoc.querySelector('.editable.main');
+		const editableElement = svgDoc.querySelector('.editable.text');
 
 		let bounds: TextAreaBounds | null = null;
 		if (editableElement) {
@@ -84,7 +84,7 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 			if (!bounds && svgContent) {
 				const parser = new DOMParser();
 				const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
-				const editableElement = svgDoc.querySelector('.editable.main');
+				const editableElement = svgDoc.querySelector('.editable.text');
 
 				if (editableElement) {
 					// rect要素の座標を直接取得

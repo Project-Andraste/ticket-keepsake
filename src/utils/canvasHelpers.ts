@@ -66,10 +66,7 @@ export const drawBarcodeToCanvas = (ctx: CanvasRenderingContext2D, bounds: Barco
 		ctx.drawImage(tempCanvas, centerX, centerY, scaledWidth, scaledHeight);
 	} catch (error) {
 		console.error('バーコード生成エラー:', error);
-		// エラーの場合は赤い枠を表示
-		ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
-		ctx.lineWidth = 2;
-		ctx.strokeRect(barcodeX, barcodeY, barcodeWidth, barcodeHeight);
+		// エラーの場合は何も表示しない
 	}
 
 	ctx.restore();
@@ -109,9 +106,6 @@ export const drawQRCodeToCanvas = async (ctx: CanvasRenderingContext2D, bounds: 
 		ctx.drawImage(tempCanvas, centerX, centerY, qrcodeSize, qrcodeSize);
 	} catch (error) {
 		console.error('QRコード生成エラー:', error);
-		// エラーの場合は赤い枠を表示
-		ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
-		ctx.lineWidth = 2;
-		ctx.strokeRect(qrcodeX, qrcodeY, qrcodeWidth, qrcodeHeight);
+		// エラーの場合は何も表示しない
 	}
 };

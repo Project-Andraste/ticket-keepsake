@@ -1,0 +1,192 @@
+.lineContainer {
+	border-bottom: 1px solid #e0e0e0;
+	padding-top: 0.75rem;
+	padding-bottom: 0.75rem;
+	margin-bottom: 0.5rem;
+}
+
+.textInput {
+	width: calc(100% - 24px);
+	padding: 8px 12px;
+	margin-bottom: 0.75rem;
+	font-size: 14px;
+	font-family: inherit;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: content-box;
+}
+
+.controlsRow {
+	display: flex;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+	align-items: center;
+	margin-bottom: 0.75rem;
+	margin-top: 0.75rem;
+}
+
+.controlGroup {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.select {
+	padding: 6px 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 14px;
+	background-color: #fff;
+	height: 34px;
+}
+
+.iconButton {
+	padding: 4px 12px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background-color: #fff;
+	cursor: pointer;
+	font-size: 0;
+	transition: all 0.2s;
+	width: 36px;
+	height: 34px;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
+
+.iconButton:hover {
+	background-color: #f5f5f5;
+}
+
+.iconButtonActive {
+	background-color: #0078d4;
+	color: white;
+	border-color: #0078d4;
+}
+
+.iconButtonActive:hover {
+	background-color: #006cc2;
+}
+
+.toggleButtonGroup {
+	display: flex;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.toggleButton {
+	padding: 4px 12px;
+	border: none;
+	border-right: 1px solid #ccc;
+	background-color: #fff;
+	cursor: pointer;
+	font-size: 0;
+	transition: all 0.2s;
+	width: 36px;
+	height: 34px;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
+
+.toggleButton:hover {
+	background-color: #f5f5f5;
+}
+
+.toggleButtonLeft {
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+}
+
+.toggleButtonMiddle {
+}
+
+.toggleButtonRight {
+	border-right: none;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
+
+.toggleButtonActive {
+	background-color: #0078d4;
+	color: white;
+}
+
+.toggleButtonActive:hover {
+	background-color: #006cc2;
+}
+
+.deleteButton {
+	padding: 6px 12px;
+	background-color: #ff6b6b;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 14px;
+}
+
+.deleteButton:hover {
+	background-color: #ff5252;
+}
+
+.marginGroup {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 0.75rem;
+	background-color: #f5f5f5;
+	border-radius: 4px;
+	font-size: 13px;
+	width: fit-content;
+}
+
+.marginLabel {
+	font-weight: 500;
+	color: #666;
+}
+
+.marginInputs {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.marginInputWrapper {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.marginInputLabel {
+	font-size: 10px;
+	color: #888;
+	font-weight: 500;
+}
+
+.marginInput {
+	width: 50px;
+	padding: 4px 6px;
+	border: 1px solid #d0d0d0;
+	border-radius: 3px;
+	font-size: 12px;
+	text-align: center;
+	background-color: #fff;
+}
+
+.marginUnit {
+	font-size: 12px;
+	color: #888;
+}
+
+.deleteButtonRow {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 0.5rem;
+}

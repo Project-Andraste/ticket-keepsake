@@ -1,40 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import type { TemplateInfo, Ticket, TicketLine } from '../types';
+import React from 'react';
+import type { TemplateInfo, TemplateWithSvg, Ticket, TicketLine } from '../types';
+import { createDefaultLine, createLineFromTemplate } from '../utils/ticketHelpers';
 import { TicketDisplay } from './TicketDisplay';
+import styles from './TicketEditor.module.css';
 import { TicketLineEditor } from './TicketLineEditor';
 
 interface TicketEditorProps {
 	ticket: Ticket;
 	ticketNumber: number;
+	templates: TemplateInfo[];
+	templatesWithSvg: TemplateWithSvg[];
 	onUpdate: (ticket: Ticket) => void;
 	onDelete: () => void;
 }
 
-export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber, onUpdate, onDelete }) => {
-	const [templates, setTemplates] = useState<TemplateInfo[]>([]);
-
-	// テンプレート情報を読み込み
-	useEffect(() => {
-		const loadTemplates = async () => {
-			try {
-				const response = await fetch('/templates.json');
-				const data: TemplateInfo[] = await response.json();
-				setTemplates(data);
-			} catch (error) {
-				console.error('Failed to load templates:', error);
-			}
-		};
-		loadTemplates();
-	}, []);
-
+export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber, templates, templatesWithSvg, onUpdate, onDelete }) => {
 	const handleAddLine = () => {
-		const newLine: TicketLine = {
-			id: crypto.randomUUID(),
-			text: '',
-			fontSize: 16,
-			bold: false,
-			align: 'left',
-		};
+		const lastLine = ticket.lines[ticket.lines.length - 1];
+		const newLine = lastLine ? createLineFromTemplate(lastLine) : createDefaultLine();
 		onUpdate({ ...ticket, lines: [...ticket.lines, newLine] });
 	};
 
@@ -53,101 +36,46 @@ export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber
 	};
 
 	return (
-		<div style={styles.container} data-ticket-id={ticket.id}>
-			<div style={styles.header}>
-				<h2>チケット {ticketNumber}</h2>
-				<button onClick={onDelete} style={styles.deleteButton}>
+		<div className={styles.container} data-ticket-id={ticket.id}>
+			<div className={styles.header}>
+				<div className={styles.headerLeft}>
+					<h2 className={styles.title}>チケット {ticketNumber}</h2>
+				</div>
+				<button onClick={onDelete} className={styles.deleteButton}>
 					このチケットを削除
 				</button>
 			</div>
 
-			<div style={styles.templateSelector}>
-				<label>テンプレート: </label>
-				<select value={ticket.templateType} onChange={(e) => handleChangeTemplate(e.target.value)} style={styles.select}>
-					{templates.map((template) => (
-						<option key={template.id} value={template.id}>
-							{template.name}
-						</option>
+			<div className={styles.content}>
+				<div className={styles.previewSection}>
+					<div className={styles.stickyBlock}>
+						<div className={styles.templateBar}>
+							<h3 className={styles.templateHeading}>テンプレート</h3>
+							<select value={ticket.templateType} onChange={(e) => handleChangeTemplate(e.target.value)} className={styles.select}>
+								{templates.map((template) => (
+									<option key={template.id} value={template.id}>
+										{template.name}
+									</option>
+								))}
+							</select>
+						</div>
+						<div>
+							<h3 className={styles.previewHeading}>プレビュー</h3>
+							<TicketDisplay ticket={ticket} templatesWithSvg={templatesWithSvg} />
+						</div>
+					</div>
+				</div>
+
+				<div className={styles.editorSection}>
+					<h3>テキスト編集</h3>
+					{ticket.lines.map((line) => (
+						<TicketLineEditor key={line.id} line={line} onUpdate={handleUpdateLine} onDelete={() => handleDeleteLine(line.id)} />
 					))}
-				</select>
-			</div>
-
-			<div style={styles.editorSection}>
-				<h3>テキスト編集</h3>
-				{ticket.lines.map((line) => (
-					<TicketLineEditor key={line.id} line={line} onUpdate={handleUpdateLine} onDelete={() => handleDeleteLine(line.id)} />
-				))}
-				<button onClick={handleAddLine} style={styles.addButton}>
-					+ 行を追加
-				</button>
-			</div>
-
-			<div style={styles.previewSection}>
-				<h3>プレビュー</h3>
-				<TicketDisplay ticket={ticket} />
+					<button onClick={handleAddLine} className={styles.addButton}>
+						+ 行を追加
+					</button>
+				</div>
 			</div>
 		</div>
 	);
-};
-
-const styles = {
-	container: {
-		border: '1px solid #e0e0e0',
-		borderRadius: '8px',
-		padding: '1.5rem',
-		marginBottom: '1.5rem',
-		backgroundColor: '#fff',
-		boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-	} as React.CSSProperties,
-	header: {
-		display: 'flex',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		marginBottom: '1rem',
-		paddingBottom: '1rem',
-		borderBottom: '2px solid #f0f0f0',
-	} as React.CSSProperties,
-	deleteButton: {
-		padding: '0.5rem 1rem',
-		backgroundColor: '#ff6b6b',
-		color: 'white',
-		border: 'none',
-		borderRadius: '4px',
-		cursor: 'pointer',
-		fontSize: '14px',
-	} as React.CSSProperties,
-	templateSelector: {
-		marginBottom: '1.5rem',
-		display: 'flex',
-		alignItems: 'center',
-		gap: '0.5rem',
-	} as React.CSSProperties,
-	select: {
-		padding: '0.5rem 0.75rem',
-		border: '1px solid #ccc',
-		borderRadius: '4px',
-		fontSize: '14px',
-	} as React.CSSProperties,
-	content: {
-		display: 'grid',
-		gridTemplateColumns: '1fr 1fr',
-		gap: '2rem',
-	} as React.CSSProperties,
-	editorSection: {
-		minHeight: '400px',
-	} as React.CSSProperties,
-	previewSection: {
-		display: 'flex',
-		flexDirection: 'column',
-	} as React.CSSProperties,
-	addButton: {
-		padding: '0.75rem 1.5rem',
-		backgroundColor: '#4CAF50',
-		color: 'white',
-		border: 'none',
-		borderRadius: '4px',
-		cursor: 'pointer',
-		fontSize: '14px',
-		marginTop: '1rem',
-	} as React.CSSProperties,
 };

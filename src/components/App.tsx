@@ -1,6 +1,9 @@
 import jsPDF from 'jspdf';
 import React, { useEffect, useState } from 'react';
-import type { AppState, TemplateInfo, Ticket } from '../types';
+import type { AppState, TemplateInfo, TemplateWithSvg, Ticket, TicketLine } from '../types';
+import { DEFAULT_TEMPLATE_ID } from '../types';
+import { createDefaultLine } from '../utils/ticketHelpers';
+import styles from './App.module.css';
 import { TicketEditor } from './TicketEditor';
 
 export const App: React.FC = () => {
@@ -8,13 +11,42 @@ export const App: React.FC = () => {
 		tickets: [],
 		templates: [],
 	});
+	const [templatesWithSvg, setTemplatesWithSvg] = useState<TemplateWithSvg[]>([]);
 
-	// テンプレート情報を読み込み
+	// テンプレート情報とSVGを読み込み
 	useEffect(() => {
 		const loadTemplates = async () => {
 			try {
 				const response = await fetch('/templates.json');
 				const templates: TemplateInfo[] = await response.json();
+
+				// 各テンプレートのSVGを読み込む
+				const templatesData = await Promise.all(
+					templates.map(async (template) => {
+						try {
+							const svgResponse = await fetch(template.svgPath);
+							const svgContent = await svgResponse.text();
+							return { ...template, svgContent };
+						} catch (error) {
+							console.error(`Failed to load SVG for template ${template.id}:`, error);
+							return { ...template, svgContent: '' };
+						}
+					}),
+				);
+
+				setTemplatesWithSvg(templatesData);
+
+				const initialLine: TicketLine = {
+					id: crypto.randomUUID(),
+					text: '',
+					fontSize: 10.5,
+					bold: false,
+					align: 'left',
+					marginTop: 0,
+					marginRight: 0,
+					marginBottom: 0,
+					marginLeft: 0,
+				};
 				setAppState((prev) => ({
 					...prev,
 					templates,
@@ -24,17 +56,7 @@ export const App: React.FC = () => {
 									{
 										id: crypto.randomUUID(),
 										templateType: templates[0]?.id || 'tt-7ticket',
-										lines: [],
-									},
-									{
-										id: crypto.randomUUID(),
-										templateType: templates[1]?.id || 'tt-lticket',
-										lines: [],
-									},
-									{
-										id: crypto.randomUUID(),
-										templateType: templates[0]?.id || 'tt-7ticket',
-										lines: [],
+										lines: [initialLine],
 									},
 								]
 							: prev.tickets,
@@ -65,11 +87,11 @@ export const App: React.FC = () => {
 	};
 
 	const handleAddTicket = () => {
-		const defaultTemplate = appState.templates[0]?.id || 'tt-7ticket';
+		const defaultTemplate = appState.templates[0]?.id || DEFAULT_TEMPLATE_ID;
 		const newTicket: Ticket = {
 			id: crypto.randomUUID(),
 			templateType: defaultTemplate,
-			lines: [],
+			lines: [createDefaultLine()],
 		};
 		setAppState({
 			...appState,
@@ -146,22 +168,24 @@ export const App: React.FC = () => {
 	};
 
 	return (
-		<div style={styles.container}>
-			<div style={styles.actionsBar}>
-				<button onClick={handleAddTicket} style={styles.primaryButton}>
+		<div className={styles.container}>
+			<div className={styles.actionsBar}>
+				<button onClick={handleAddTicket} className={styles.primaryButton}>
 					+ チケットを追加
 				</button>
-				<button onClick={handleSavePDF} style={styles.secondaryButton}>
+				<button onClick={handleSavePDF} className={styles.secondaryButton}>
 					PDF として保存
 				</button>
 			</div>
 
-			<div style={styles.ticketsContainer}>
+			<div className={styles.ticketsContainer}>
 				{appState.tickets.map((ticket, index) => (
 					<TicketEditor
 						key={ticket.id}
 						ticket={ticket}
 						ticketNumber={index + 1}
+						templates={appState.templates}
+						templatesWithSvg={templatesWithSvg}
 						onUpdate={handleUpdateTicket}
 						onDelete={() => handleDeleteTicket(ticket.id)}
 					/>
@@ -169,44 +193,4 @@ export const App: React.FC = () => {
 			</div>
 		</div>
 	);
-};
-
-const styles = {
-	container: {
-		maxWidth: '1400px',
-		margin: '0 auto',
-		padding: '2rem',
-		fontFamily: 'system-ui, -apple-system, sans-serif',
-		backgroundColor: '#fafafa',
-		minHeight: '100vh',
-	} as React.CSSProperties,
-	actionsBar: {
-		display: 'flex',
-		gap: '1rem',
-		marginBottom: '2rem',
-		justifyContent: 'center',
-	} as React.CSSProperties,
-	primaryButton: {
-		padding: '0.75rem 1.5rem',
-		backgroundColor: '#007bff',
-		color: 'white',
-		border: 'none',
-		borderRadius: '4px',
-		cursor: 'pointer',
-		fontSize: '16px',
-		fontWeight: 'bold',
-	} as React.CSSProperties,
-	secondaryButton: {
-		padding: '0.75rem 1.5rem',
-		backgroundColor: '#6c757d',
-		color: 'white',
-		border: 'none',
-		borderRadius: '4px',
-		cursor: 'pointer',
-		fontSize: '16px',
-	} as React.CSSProperties,
-	ticketsContainer: {
-		display: 'flex',
-		flexDirection: 'column',
-	} as React.CSSProperties,
 };

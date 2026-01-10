@@ -1,5 +1,6 @@
 import React from 'react';
 import type { TicketLine } from '../types';
+import styles from './TicketLineEditor.module.css';
 
 interface TicketLineEditorProps {
 	line: TicketLine;
@@ -7,113 +8,132 @@ interface TicketLineEditorProps {
 	onDelete: () => void;
 }
 
-const MIN_FONT_SIZE = 8;
-const MAX_FONT_SIZE = 48;
-const DEFAULT_FONT_SIZE = 16;
+const FONT_SIZE_OPTIONS = [8, 9, 10, 10.5, 11, 12, 13, 14, 15, 16, 18, 20, 24, 28, 32, 36, 40, 48];
+const DEFAULT_FONT_SIZE = 10.5;
 
 export const TicketLineEditor: React.FC<TicketLineEditorProps> = ({ line, onUpdate, onDelete }) => {
 	const handleFontSizeChange = (value: string) => {
-		const parsed = parseInt(value, 10);
+		const parsed = parseFloat(value);
 		if (isNaN(parsed)) {
-			// 無効な値の場合はデフォルト値を使用
 			onUpdate({ ...line, fontSize: DEFAULT_FONT_SIZE });
 			return;
 		}
-		// 範囲内に制約
-		const clampedValue = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, parsed));
-		onUpdate({ ...line, fontSize: clampedValue });
+		onUpdate({ ...line, fontSize: parsed });
 	};
+
+	const handleOffsetChange = (key: 'marginTop' | 'marginRight' | 'marginBottom' | 'marginLeft', value: string) => {
+		const parsed = parseFloat(value) || 0;
+		onUpdate({ ...line, [key]: parsed });
+	};
+
 	return (
-		<div style={styles.lineContainer}>
+		<div className={styles.lineContainer}>
 			<input
 				type="text"
 				value={line.text}
 				onChange={(e) => onUpdate({ ...line, text: e.target.value })}
 				placeholder="チケットに記載するテキストを入力"
-				style={styles.textInput}
+				className={styles.textInput}
 			/>
-			<div style={styles.controlsContainer}>
-				<div style={styles.controlGroup}>
-					<label>フォントサイズ: </label>
-					<input
-						type="number"
-						value={line.fontSize}
-						onChange={(e) => handleFontSizeChange(e.target.value)}
-						min={MIN_FONT_SIZE}
-						max={MAX_FONT_SIZE}
-						style={styles.numberInput}
-					/>
-					<span>px</span>
-				</div>
 
-				<div style={styles.controlGroup}>
-					<select
-						value={line.align}
-						onChange={(e) =>
-							onUpdate({
-								...line,
-								align: e.target.value as 'left' | 'center' | 'right',
-							})
-						}
-						style={styles.select}
-					>
-						<option value="left">左</option>
-						<option value="center">中央</option>
-						<option value="right">右</option>
+			<div className={styles.marginGroup}>
+				<span className={styles.marginLabel}>余白:</span>
+				<div className={styles.marginInputs}>
+					<div className={styles.marginInputWrapper}>
+						<label className={styles.marginInputLabel}>上</label>
+						<input
+							type="number"
+							value={line.marginTop ?? 0.1}
+							onChange={(e) => handleOffsetChange('marginTop', e.target.value)}
+							step="0.05"
+							className={styles.marginInput}
+						/>
+					</div>
+					<div className={styles.marginInputWrapper}>
+						<label className={styles.marginInputLabel}>右</label>
+						<input
+							type="number"
+							value={line.marginRight ?? 0.2}
+							onChange={(e) => handleOffsetChange('marginRight', e.target.value)}
+							step="0.05"
+							className={styles.marginInput}
+						/>
+					</div>
+					<div className={styles.marginInputWrapper}>
+						<label className={styles.marginInputLabel}>下</label>
+						<input
+							type="number"
+							value={line.marginBottom ?? 0.1}
+							onChange={(e) => handleOffsetChange('marginBottom', e.target.value)}
+							step="0.05"
+							className={styles.marginInput}
+						/>
+					</div>
+					<div className={styles.marginInputWrapper}>
+						<label className={styles.marginInputLabel}>左</label>
+						<input
+							type="number"
+							value={line.marginLeft ?? 0.2}
+							onChange={(e) => handleOffsetChange('marginLeft', e.target.value)}
+							step="0.05"
+							className={styles.marginInput}
+						/>
+					</div>
+				</div>
+				<span className={styles.marginUnit}>cm</span>
+			</div>
+
+			<div className={styles.controlsRow}>
+				<div className={styles.controlGroup}>
+					<select value={line.fontSize} onChange={(e) => handleFontSizeChange(e.target.value)} className={styles.select}>
+						{FONT_SIZE_OPTIONS.map((size) => (
+							<option key={size} value={size}>
+								{size}pt
+							</option>
+						))}
 					</select>
 				</div>
 
-				<button onClick={onDelete} style={styles.deleteButton}>
+				<button
+					onClick={() => onUpdate({ ...line, bold: !line.bold })}
+					className={`${styles.iconButton} ${line.bold ? styles.iconButtonActive : ''}`}
+					title="太字"
+				>
+					<span className="material-symbols-outlined">format_bold</span>
+				</button>
+
+				<div className={styles.toggleButtonGroup}>
+					<button
+						onClick={() => onUpdate({ ...line, align: 'left' })}
+						className={`${styles.toggleButton} ${styles.toggleButtonLeft} ${line.align === 'left' ? styles.toggleButtonActive : ''}`}
+						title="左揃え"
+					>
+						<span className="material-symbols-outlined">format_align_left</span>
+					</button>
+
+					<button
+						onClick={() => onUpdate({ ...line, align: 'center' })}
+						className={`${styles.toggleButton} ${styles.toggleButtonMiddle} ${line.align === 'center' ? styles.toggleButtonActive : ''}`}
+						title="中央揃え"
+					>
+						<span className="material-symbols-outlined">format_align_center</span>
+					</button>
+
+					<button
+						onClick={() => onUpdate({ ...line, align: 'right' })}
+						className={`${styles.toggleButton} ${styles.toggleButtonRight} ${line.align === 'right' ? styles.toggleButtonActive : ''}`}
+						title="右揃え"
+					>
+						<span className="material-symbols-outlined">format_align_right</span>
+					</button>
+				</div>
+
+				<div style={{ flex: 1 }} />
+
+				<button onClick={onDelete} className={styles.deleteButton}>
 					削除
 				</button>
 			</div>
 		</div>
 	);
-};
-
-const styles = {
-	lineContainer: {
-		borderBottom: '1px solid #ddd',
-		paddingBottom: '1rem',
-		marginBottom: '1rem',
-	} as React.CSSProperties,
-	textInput: {
-		width: '100%',
-		padding: '8px',
-		marginBottom: '0.5rem',
-		fontSize: '14px',
-		fontFamily: 'inherit',
-		border: '1px solid #ccc',
-		borderRadius: '4px',
-	} as React.CSSProperties,
-	controlsContainer: {
-		display: 'flex',
-		gap: '1rem',
-		flexWrap: 'wrap',
-		alignItems: 'center',
-	} as React.CSSProperties,
-	controlGroup: {
-		display: 'flex',
-		alignItems: 'center',
-		gap: '0.5rem',
-	} as React.CSSProperties,
-	numberInput: {
-		width: '60px',
-		padding: '4px',
-		border: '1px solid #ccc',
-		borderRadius: '4px',
-	} as React.CSSProperties,
-	select: {
-		padding: '4px 8px',
-		border: '1px solid #ccc',
-		borderRadius: '4px',
-	} as React.CSSProperties,
-	deleteButton: {
-		padding: '0.5rem 1rem',
-		backgroundColor: '#ff6b6b',
-		color: 'white',
-		border: 'none',
-		borderRadius: '4px',
-		cursor: 'pointer',
-	} as React.CSSProperties,
 };

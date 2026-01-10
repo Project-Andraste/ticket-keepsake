@@ -37,7 +37,7 @@ export const TicketLineEditor: React.FC<TicketLineEditorProps> = ({ line, onUpda
 			/>
 
 			<div className={styles.marginGroup}>
-				<span className={styles.marginLabel}>余白:</span>
+				<span className={styles.marginLabel}>余白 (cm)</span>
 				<div className={styles.marginInputs}>
 					<div className={styles.marginInputWrapper}>
 						<label className={styles.marginInputLabel}>上</label>
@@ -80,7 +80,6 @@ export const TicketLineEditor: React.FC<TicketLineEditorProps> = ({ line, onUpda
 						/>
 					</div>
 				</div>
-				<span className={styles.marginUnit}>cm</span>
 			</div>
 
 			<div className={styles.controlsRow}>

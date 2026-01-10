@@ -12,6 +12,8 @@ export const App: React.FC = () => {
 		templates: [],
 	});
 	const [templatesWithSvg, setTemplatesWithSvg] = useState<TemplateWithSvg[]>([]);
+	const [isMobile, setIsMobile] = useState(false);
+	const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
 
 	// テンプレート情報とSVGを読み込み
 	useEffect(() => {
@@ -70,6 +72,34 @@ export const App: React.FC = () => {
 		loadTemplates();
 	}, []);
 
+	// ビューポート幅でモバイル判定
+	useEffect(() => {
+		const mediaQuery = window.matchMedia('(max-width: 768px)');
+		const handleMediaChange = (event: MediaQueryListEvent) => {
+			setIsMobile(event.matches);
+		};
+
+		setIsMobile(mediaQuery.matches);
+		mediaQuery.addEventListener('change', handleMediaChange);
+
+		return () => {
+			mediaQuery.removeEventListener('change', handleMediaChange);
+		};
+	}, []);
+
+	// チケットの選択状態を同期
+	useEffect(() => {
+		if (appState.tickets.length === 0) {
+			setSelectedTicketId(null);
+			return;
+		}
+
+		const exists = appState.tickets.some((ticket) => ticket.id === selectedTicketId);
+		if (!selectedTicketId || !exists) {
+			setSelectedTicketId(appState.tickets[0].id);
+		}
+	}, [appState.tickets, selectedTicketId]);
+
 	const handleUpdateTicket = (updatedTicket: Ticket) => {
 		setAppState({
 			...appState,
@@ -82,10 +112,14 @@ export const App: React.FC = () => {
 			alert('最低1つのチケットが必要です');
 			return;
 		}
+		const updatedTickets = appState.tickets.filter((ticket) => ticket.id !== ticketId);
 		setAppState({
 			...appState,
-			tickets: appState.tickets.filter((ticket) => ticket.id !== ticketId),
+			tickets: updatedTickets,
 		});
+		if (isMobile && selectedTicketId === ticketId) {
+			setSelectedTicketId(updatedTickets[0]?.id ?? null);
+		}
 	};
 
 	const handleAddTicket = () => {
@@ -99,6 +133,9 @@ export const App: React.FC = () => {
 			...appState,
 			tickets: [...appState.tickets, newTicket],
 		});
+		if (isMobile) {
+			setSelectedTicketId(newTicket.id);
+		}
 	};
 
 	const handleSavePDF = async () => {
@@ -169,6 +206,8 @@ export const App: React.FC = () => {
 		}
 	};
 
+	const currentSelectedId = selectedTicketId ?? appState.tickets[0]?.id ?? '';
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.actionsBar}>
@@ -178,19 +217,42 @@ export const App: React.FC = () => {
 				<button onClick={handleSavePDF} className={styles.secondaryButton}>
 					PDF として保存
 				</button>
+				{isMobile && appState.tickets.length > 0 ? (
+					<div className={styles.mobileTicketSelectWrapper}>
+						<label className={styles.mobileTicketLabel} htmlFor="ticket-select">
+							表示中のチケット
+						</label>
+						<select
+							id="ticket-select"
+							className={styles.mobileTicketSelect}
+							value={currentSelectedId}
+							onChange={(e) => setSelectedTicketId(e.target.value)}
+						>
+							{appState.tickets.map((ticket, index) => (
+								<option key={ticket.id} value={ticket.id}>
+									チケット {index + 1}
+								</option>
+							))}
+						</select>
+					</div>
+				) : null}
 			</div>
 
 			<div className={styles.ticketsContainer}>
 				{appState.tickets.map((ticket, index) => (
-					<TicketEditor
+					<div
 						key={ticket.id}
-						ticket={ticket}
-						ticketNumber={index + 1}
-						templates={appState.templates}
-						templatesWithSvg={templatesWithSvg}
-						onUpdate={handleUpdateTicket}
-						onDelete={() => handleDeleteTicket(ticket.id)}
-					/>
+						className={isMobile && currentSelectedId && ticket.id !== currentSelectedId ? styles.ticketHiddenMobile : undefined}
+					>
+						<TicketEditor
+							ticket={ticket}
+							ticketNumber={index + 1}
+							templates={appState.templates}
+							templatesWithSvg={templatesWithSvg}
+							onUpdate={handleUpdateTicket}
+							onDelete={() => handleDeleteTicket(ticket.id)}
+						/>
+					</div>
 				))}
 			</div>
 		</div>

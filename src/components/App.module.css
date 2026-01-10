@@ -55,4 +55,53 @@
 .ticketsContainer {
 	display: flex;
 	flex-direction: column;
+	gap: 1rem;
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+	.container {
+		padding: 1rem;
+	}
+
+	.actionsBar {
+		flex-direction: column;
+		gap: 0.5rem;
+		margin-left: -1rem;
+		margin-right: -1rem;
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+
+	.primaryButton,
+	.secondaryButton {
+		width: 100%;
+		padding: 0.625rem 1rem;
+		font-size: 14px;
+	}
+
+	.mobileTicketSelectWrapper {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.mobileTicketLabel {
+		font-size: 14px;
+		color: #444;
+	}
+
+	.mobileTicketSelect {
+		width: 100%;
+		padding: 0.625rem 0.75rem;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		font-size: 14px;
+		background-color: #fff;
+	}
+
+	.ticketHiddenMobile {
+		display: none;
+	}
 }

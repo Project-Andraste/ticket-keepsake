@@ -17,14 +17,16 @@ export const App: React.FC = () => {
 	useEffect(() => {
 		const loadTemplates = async () => {
 			try {
-				const response = await fetch('/templates.json');
+				const response = await fetch(`${import.meta.env.BASE_URL}templates.json`);
 				const templates: TemplateInfo[] = await response.json();
 
 				// 各テンプレートのSVGを読み込む
 				const templatesData = await Promise.all(
 					templates.map(async (template) => {
 						try {
-							const svgResponse = await fetch(template.svgPath);
+							const svgResponse = await fetch(
+								`${import.meta.env.BASE_URL}${template.svgPath.startsWith('/') ? template.svgPath.slice(1) : template.svgPath}`,
+							);
 							const svgContent = await svgResponse.text();
 							return { ...template, svgContent };
 						} catch (error) {

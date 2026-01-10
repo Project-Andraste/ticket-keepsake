@@ -1,0 +1,18 @@
+<svg viewBox="0 0 14.1 6.1" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-multi">
+      <stop offset="0" stop-color="#ede0e5"/>
+      <stop offset="0.2" stop-color="#efe5d8"/>
+      <stop offset="0.4" stop-color="#ede8d8"/>
+      <stop offset="0.6" stop-color="#dfe3dd"/>
+      <stop offset="0.833" stop-color="#dfe3dd"/>
+      <stop offset="0.944" stop-color="#dfe3ea"/>
+      <stop offset="1" stop-color="#e2dfe8"/>
+    </linearGradient>
+    <linearGradient id="grad-middle" href="#grad-multi" x1="8.85" y1="0.2" x2="8.85" y2="5.9" gradientUnits="userSpaceOnUse" spreadMethod="repeat"/>
+  </defs>
+  <rect fill="#ffffff" width="3.6" height="6.1" x="0" y="0"/>
+  <rect fill="#3459c4" width="10.5" height="0.2" x="3.6" y="0"/>
+  <rect fill="#3459c4" width="10.5" height="0.2" x="3.6" y="5.9"/>
+  <rect fill="url(#grad-middle)" width="10.5" height="5.7" x="3.6" y="0.2" class="editable main"/>
+</svg>

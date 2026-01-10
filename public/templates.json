@@ -1,0 +1,16 @@
+[
+	{
+		"id": "tt-7ticket",
+		"name": "セブンイレブン",
+		"svgPath": "/tt-7ticket.svg",
+		"width": 12.8,
+		"height": 7.5
+	},
+	{
+		"id": "tt-lticket",
+		"name": "ローソン",
+		"svgPath": "/tt-lticket.svg",
+		"width": 14.1,
+		"height": 6.1
+	}
+]

@@ -1,0 +1,20 @@
+<svg viewBox="0 0 12.8 7.5" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-teal">
+      <stop offset="0" stop-color="#77a6a1"/>
+      <stop offset="0.5" stop-color="#015950"/>
+    </linearGradient>
+    <linearGradient id="grad-pale">
+      <stop offset="0" stop-color="#c4dcc2"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <linearGradient id="grad-top" href="#grad-teal" x1="3" y1="0.25" x2="12.8" y2="0.25" gradientUnits="userSpaceOnUse"/>
+    <linearGradient id="grad-bottom" href="#grad-teal" x1="3" y1="0.25" x2="12.8" y2="0.25" gradientUnits="userSpaceOnUse" gradientTransform="translate(0,7)"/>
+    <linearGradient id="grad-middle" href="#grad-pale" x1="3" y1="0.5" x2="3" y2="7" gradientUnits="userSpaceOnUse"/>
+  </defs>
+  <rect fill="#ffffff" width="2.6" height="7.5" x="0.4" y="0"/>
+  <rect fill="url(#grad-middle)" width="9.8" height="6.5" x="3" y="0.5" class="editable main"/>
+  <rect fill="url(#grad-bottom)" width="9.8" height="0.5" x="3" y="7"/>
+  <rect fill="url(#grad-top)" width="9.8" height="0.5" x="3" y="0"/>
+  <rect fill="#015950" width="0.4" height="7.5" x="0" y="0"/>
+</svg>

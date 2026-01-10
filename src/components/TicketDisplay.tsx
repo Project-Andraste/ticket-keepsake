@@ -1,4 +1,5 @@
 import JsBarcode from 'jsbarcode';
+import QRCode from 'qrcode';
 import React, { useEffect, useMemo, useRef } from 'react';
 import type { TemplateWithSvg, Ticket } from '../types';
 import styles from './TicketDisplay.module.css';
@@ -23,6 +24,13 @@ interface BarcodeBounds {
 	rotation: number; // 回転角度（度）
 }
 
+interface QrcodeBounds {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+}
+
 // CSS準拠のスケール: 1cm = 96px / 2.54 ≈ 37.79527559px
 const CANVAS_SCALE = 96 / 2.54;
 
@@ -31,7 +39,7 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	// テンプレート情報とSVG関連データをメモ化
-	const { templateInfo, svgUrl, svgContent, textAreaBounds, barcodeBounds } = useMemo(() => {
+	const { templateInfo, svgUrl, svgContent, textAreaBounds, barcodeBounds, qrcodeBounds, editableOrder } = useMemo(() => {
 		const template = templatesWithSvg.find((t) => t.id === ticket.templateType);
 		if (!template) {
 			return {
@@ -40,6 +48,8 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 				svgContent: '',
 				textAreaBounds: null,
 				barcodeBounds: null,
+				qrcodeBounds: null,
+				editableOrder: [],
 			};
 		}
 
@@ -49,6 +59,16 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 		// SVGから編集可能エリアの情報を抽出
 		const parser = new DOMParser();
 		const svgDoc = parser.parseFromString(template.svgContent, 'image/svg+xml');
+
+		// SVG内の.editable要素の順序を取得
+		const editableElements = Array.from(svgDoc.querySelectorAll('.editable'));
+		const order: string[] = [];
+		editableElements.forEach((el) => {
+			if (el.classList.contains('barcode')) order.push('barcode');
+			else if (el.classList.contains('qrcode')) order.push('qrcode');
+			else if (el.classList.contains('text')) order.push('text');
+		});
+
 		const editableElement = svgDoc.querySelector('.editable.text');
 
 		let bounds: TextAreaBounds | null = null;
@@ -78,12 +98,26 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 			};
 		}
 
+		// QRコード領域の情報を抽出
+		const qrcodeElement = svgDoc.querySelector('.editable.qrcode');
+		let qrBounds: QrcodeBounds | null = null;
+		if (qrcodeElement) {
+			qrBounds = {
+				x: parseFloat(qrcodeElement.getAttribute('x') || '0'),
+				y: parseFloat(qrcodeElement.getAttribute('y') || '0'),
+				width: parseFloat(qrcodeElement.getAttribute('width') || '0'),
+				height: parseFloat(qrcodeElement.getAttribute('height') || '0'),
+			};
+		}
+
 		return {
 			templateInfo: template,
 			svgUrl: url,
 			svgContent: template.svgContent,
 			textAreaBounds: bounds,
 			barcodeBounds: barcBounds,
+			qrcodeBounds: qrBounds,
+			editableOrder: order,
 		};
 	}, [ticket.templateType, templatesWithSvg]);
 
@@ -189,8 +223,10 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 				});
 			}
 
-			// バーコードを描画
-			if (barcodeBounds && ticket.barcode && ticket.barcode.trim()) {
+			// SVGの要素順序に従って描画関数を定義
+			const drawBarcode = () => {
+				if (!barcodeBounds || !ticket.barcode || !ticket.barcode.trim()) return;
+
 				ctx.save();
 
 				// 回転の中心は原点(0,0)なので、SVGと同じ変換を適用
@@ -247,10 +283,55 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 				}
 
 				ctx.restore();
-			}
+			};
+
+			const drawQRCode = async () => {
+				if (!qrcodeBounds || !ticket.qrcode || !ticket.qrcode.trim()) return;
+
+				const qrcodeX = qrcodeBounds.x * CANVAS_SCALE;
+				const qrcodeY = qrcodeBounds.y * CANVAS_SCALE;
+				const qrcodeWidth = qrcodeBounds.width * CANVAS_SCALE;
+				const qrcodeHeight = qrcodeBounds.height * CANVAS_SCALE;
+
+				// QRコードのサイズは正方形なので、小さい方を採用
+				const qrcodeSize = Math.min(qrcodeWidth, qrcodeHeight);
+
+				// 一時的なCanvasを使ってQRコード画像を生成
+				const tempCanvas = document.createElement('canvas');
+				try {
+					await QRCode.toCanvas(tempCanvas, ticket.qrcode, {
+						width: qrcodeSize,
+						margin: 0,
+						errorCorrectionLevel: 'M',
+					});
+
+					// 中央配置のための座標計算
+					const centerX = qrcodeX + (qrcodeWidth - qrcodeSize) / 2;
+					const centerY = qrcodeY + (qrcodeHeight - qrcodeSize) / 2;
+
+					// 生成されたQRコード画像を中央に描画
+					ctx.drawImage(tempCanvas, centerX, centerY, qrcodeSize, qrcodeSize);
+				} catch (error) {
+					console.error('QRコード生成エラー:', error);
+					// エラーの場合は赤い枠を表示
+					ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
+					ctx.lineWidth = 2;
+					ctx.strokeRect(qrcodeX, qrcodeY, qrcodeWidth, qrcodeHeight);
+				}
+			};
+
+			// SVGの要素順序に従って描画（非同期処理を順次実行）
+			const drawInOrder = async () => {
+				for (const type of editableOrder) {
+					if (type === 'barcode') drawBarcode();
+					else if (type === 'qrcode') await drawQRCode();
+				}
+			};
+
+			drawInOrder();
 		};
 		svgImg.src = svgUrl;
-	}, [svgUrl, svgContent, ticket.lines, ticket.barcode, textAreaBounds, barcodeBounds, templateInfo]);
+	}, [svgUrl, svgContent, ticket.lines, ticket.barcode, ticket.qrcode, textAreaBounds, barcodeBounds, qrcodeBounds, editableOrder, templateInfo]);
 
 	return (
 		<div ref={containerRef} className={styles.container}>

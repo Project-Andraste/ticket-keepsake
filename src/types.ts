@@ -35,6 +35,7 @@ export interface Ticket {
 	templateType: string;
 	lines: TicketLine[];
 	barcode?: string;
+	qrcode?: string;
 }
 
 // SVGテンプレート情報

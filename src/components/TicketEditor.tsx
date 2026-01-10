@@ -39,6 +39,10 @@ export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber
 		onUpdate({ ...ticket, barcode: value });
 	};
 
+	const handleQrcodeChange = (value: string) => {
+		onUpdate({ ...ticket, qrcode: value });
+	};
+
 	return (
 		<div className={styles.container} data-ticket-id={ticket.id}>
 			<div className={styles.header}>
@@ -88,6 +92,19 @@ export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber
 							value={ticket.barcode || ''}
 							onChange={(e) => handleBarcodeChange(e.target.value)}
 							placeholder="例: 1234567890"
+							className={styles.barcodeInput}
+						/>
+					</div>
+
+					<h3 style={{ marginTop: '2rem' }}>QRコード</h3>
+					<div className={styles.barcodeSection}>
+						<label htmlFor={`qrcode-${ticket.id}`}>QRコード値:</label>
+						<input
+							id={`qrcode-${ticket.id}`}
+							type="text"
+							value={ticket.qrcode || ''}
+							onChange={(e) => handleQrcodeChange(e.target.value)}
+							placeholder="例: https://example.com"
 							className={styles.barcodeInput}
 						/>
 					</div>

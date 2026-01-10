@@ -17,7 +17,7 @@
   <rect fill="url(#grad-bottom)" width="9.8" height="0.5" x="3" y="7"/>
   <rect fill="url(#grad-top)" width="9.8" height="0.5" x="3" y="0"/>
   <rect fill="#015950" width="0.4" height="7.5" x="0" y="0"/>
-  <rect fill="none" width="0.7" height="0.7" x="2.05" y="3.4" class="editable qrcode"/>
+  <rect fill="none" width="1.05" height="1.05" x="1.7" y="3.225" class="editable qrcode"/>
   <rect fill="none" width="7.5" height="1" x="0" y="-2.75" transform="rotate(90)" class="editable barcode"/>
   <rect fill="none" width="9.8" height="6.5" x="3" y="0.5" class="editable text"/>
 </svg>

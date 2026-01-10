@@ -57,9 +57,20 @@ export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber
 			<div className={styles.content}>
 				<div className={styles.previewSection}>
 					<div className={styles.stickyBlock}>
+						<div className={styles.previewBlock}>
+							<h3 className={styles.previewHeading}>プレビュー</h3>
+							<TicketDisplay ticket={ticket} templatesWithSvg={templatesWithSvg} />
+						</div>
 						<div className={styles.templateBar}>
-							<h3 className={styles.templateHeading}>テンプレート</h3>
-							<select value={ticket.templateType} onChange={(e) => handleChangeTemplate(e.target.value)} className={styles.select}>
+							<label className={styles.templateLabel} htmlFor={`template-${ticket.id}`}>
+								テンプレート
+							</label>
+							<select
+								id={`template-${ticket.id}`}
+								value={ticket.templateType}
+								onChange={(e) => handleChangeTemplate(e.target.value)}
+								className={styles.select}
+							>
 								{templates.map((template) => (
 									<option key={template.id} value={template.id}>
 										{template.name}
@@ -67,25 +78,13 @@ export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber
 								))}
 							</select>
 						</div>
-						<div>
-							<h3 className={styles.previewHeading}>プレビュー</h3>
-							<TicketDisplay ticket={ticket} templatesWithSvg={templatesWithSvg} />
-						</div>
 					</div>
 				</div>
 
 				<div className={styles.editorSection}>
-					<h3>テキスト編集</h3>
-					{ticket.lines.map((line) => (
-						<TicketLineEditor key={line.id} line={line} onUpdate={handleUpdateLine} onDelete={() => handleDeleteLine(line.id)} />
-					))}
-					<button onClick={handleAddLine} className={styles.addButton}>
-						+ 行を追加
-					</button>
-
-					<h3 style={{ marginTop: '2rem' }}>バーコード</h3>
+					<h3>バーコード・QRコード</h3>
 					<div className={styles.barcodeSection}>
-						<label htmlFor={`barcode-${ticket.id}`}>バーコード値 (Code128):</label>
+						<label htmlFor={`barcode-${ticket.id}`}>バーコード:</label>
 						<input
 							id={`barcode-${ticket.id}`}
 							type="text"
@@ -94,11 +93,10 @@ export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber
 							placeholder="例: 1234567890"
 							className={styles.barcodeInput}
 						/>
-					</div>
 
-					<h3 style={{ marginTop: '2rem' }}>QRコード</h3>
-					<div className={styles.barcodeSection}>
-						<label htmlFor={`qrcode-${ticket.id}`}>QRコード値:</label>
+						<label htmlFor={`qrcode-${ticket.id}`} style={{ marginTop: '1rem' }}>
+							QRコード:
+						</label>
 						<input
 							id={`qrcode-${ticket.id}`}
 							type="text"
@@ -108,6 +106,14 @@ export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber
 							className={styles.barcodeInput}
 						/>
 					</div>
+
+					<h3>テキスト編集</h3>
+					{ticket.lines.map((line) => (
+						<TicketLineEditor key={line.id} line={line} onUpdate={handleUpdateLine} onDelete={() => handleDeleteLine(line.id)} />
+					))}
+					<button onClick={handleAddLine} className={styles.addButton}>
+						+ 行を追加
+					</button>
 				</div>
 			</div>
 		</div>

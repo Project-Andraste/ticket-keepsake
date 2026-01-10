@@ -1,38 +1,14 @@
-import JsBarcode from 'jsbarcode';
-import QRCode from 'qrcode';
 import React, { useEffect, useMemo, useRef } from 'react';
 import type { TemplateWithSvg, Ticket } from '../types';
+import { drawBarcodeToCanvas, drawQRCodeToCanvas } from '../utils/canvasHelpers';
+import { CANVAS_SCALE, DEFAULT_FONT } from '../utils/constants';
+import { createSvgBlobUrl, parseBarcodeBounds, parseEditableOrder, parseQRCodeBounds, parseTextAreaBounds } from '../utils/svgHelpers';
 import styles from './TicketDisplay.module.css';
 
 interface TicketDisplayProps {
 	ticket: Ticket;
 	templatesWithSvg: TemplateWithSvg[];
 }
-
-interface TextAreaBounds {
-	x: number;
-	y: number;
-	width: number;
-	height: number;
-}
-
-interface BarcodeBounds {
-	x: number;
-	y: number;
-	width: number;
-	height: number;
-	rotation: number; // 回転角度（度）
-}
-
-interface QrcodeBounds {
-	x: number;
-	y: number;
-	width: number;
-	height: number;
-}
-
-// CSS準拠のスケール: 1cm = 96px / 2.54 ≈ 37.79527559px
-const CANVAS_SCALE = 96 / 2.54;
 
 export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesWithSvg }) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -53,71 +29,14 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 			};
 		}
 
-		const blob = new Blob([template.svgContent], { type: 'image/svg+xml' });
-		const url = URL.createObjectURL(blob);
-
-		// SVGから編集可能エリアの情報を抽出
-		const parser = new DOMParser();
-		const svgDoc = parser.parseFromString(template.svgContent, 'image/svg+xml');
-
-		// SVG内の.editable要素の順序を取得
-		const editableElements = Array.from(svgDoc.querySelectorAll('.editable'));
-		const order: string[] = [];
-		editableElements.forEach((el) => {
-			if (el.classList.contains('barcode')) order.push('barcode');
-			else if (el.classList.contains('qrcode')) order.push('qrcode');
-			else if (el.classList.contains('text')) order.push('text');
-		});
-
-		const editableElement = svgDoc.querySelector('.editable.text');
-
-		let bounds: TextAreaBounds | null = null;
-		if (editableElement) {
-			bounds = {
-				x: parseFloat(editableElement.getAttribute('x') || '0'),
-				y: parseFloat(editableElement.getAttribute('y') || '0'),
-				width: parseFloat(editableElement.getAttribute('width') || '0'),
-				height: parseFloat(editableElement.getAttribute('height') || '0'),
-			};
-		}
-
-		// バーコード領域の情報を抽出
-		const barcodeElement = svgDoc.querySelector('.editable.barcode');
-		let barcBounds: BarcodeBounds | null = null;
-		if (barcodeElement) {
-			const transform = barcodeElement.getAttribute('transform') || '';
-			const rotateMatch = transform.match(/rotate\((-?\d+(?:\.\d+)?)\)/);
-			const rotation = rotateMatch ? parseFloat(rotateMatch[1]) : 0;
-
-			barcBounds = {
-				x: parseFloat(barcodeElement.getAttribute('x') || '0'),
-				y: parseFloat(barcodeElement.getAttribute('y') || '0'),
-				width: parseFloat(barcodeElement.getAttribute('width') || '0'),
-				height: parseFloat(barcodeElement.getAttribute('height') || '0'),
-				rotation,
-			};
-		}
-
-		// QRコード領域の情報を抽出
-		const qrcodeElement = svgDoc.querySelector('.editable.qrcode');
-		let qrBounds: QrcodeBounds | null = null;
-		if (qrcodeElement) {
-			qrBounds = {
-				x: parseFloat(qrcodeElement.getAttribute('x') || '0'),
-				y: parseFloat(qrcodeElement.getAttribute('y') || '0'),
-				width: parseFloat(qrcodeElement.getAttribute('width') || '0'),
-				height: parseFloat(qrcodeElement.getAttribute('height') || '0'),
-			};
-		}
-
 		return {
 			templateInfo: template,
-			svgUrl: url,
+			svgUrl: createSvgBlobUrl(template.svgContent),
 			svgContent: template.svgContent,
-			textAreaBounds: bounds,
-			barcodeBounds: barcBounds,
-			qrcodeBounds: qrBounds,
-			editableOrder: order,
+			textAreaBounds: parseTextAreaBounds(template.svgContent),
+			barcodeBounds: parseBarcodeBounds(template.svgContent),
+			qrcodeBounds: parseQRCodeBounds(template.svgContent),
+			editableOrder: parseEditableOrder(template.svgContent),
 		};
 	}, [ticket.templateType, templatesWithSvg]);
 
@@ -160,7 +79,7 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 			}
 
 			// フォント設定
-			const fontFamily = "'Noto Sans JP', sans-serif";
+			const fontFamily = DEFAULT_FONT.FAMILY;
 			ctx.fillStyle = '#000';
 			ctx.textBaseline = 'top'; // ベースラインを上揃えに設定
 
@@ -187,7 +106,7 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 					const marginRight = (line.marginRight ?? 0.2) * CANVAS_SCALE;
 
 					// フォント設定
-					const fontSize = Math.max(8, line.fontSize);
+					const fontSize = Math.max(DEFAULT_FONT.MIN_SIZE, line.fontSize);
 					ctx.font = `${line.bold ? 'bold ' : ''}${fontSize}px ${fontFamily}`;
 
 					// y位置は現在の基準に「上余白」を加算
@@ -223,108 +142,14 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({ ticket, templatesW
 				});
 			}
 
-			// SVGの要素順序に従って描画関数を定義
-			const drawBarcode = () => {
-				if (!barcodeBounds || !ticket.barcode || !ticket.barcode.trim()) return;
-
-				ctx.save();
-
-				// 回転の中心は原点(0,0)なので、SVGと同じ変換を適用
-				const radians = (barcodeBounds.rotation * Math.PI) / 180;
-				ctx.rotate(radians);
-
-				// スケール適用後の座標
-				const barcodeX = barcodeBounds.x * CANVAS_SCALE;
-				const barcodeY = barcodeBounds.y * CANVAS_SCALE;
-				const barcodeWidth = barcodeBounds.width * CANVAS_SCALE;
-				const barcodeHeight = barcodeBounds.height * CANVAS_SCALE;
-
-				// 一時的なCanvasを使ってバーコード画像を生成
-				const tempCanvas = document.createElement('canvas');
-				try {
-					// テンプレートのバーコードオプションを取得（デフォルト値あり）
-					const barcodeOpts = templateInfo.barcodeOptions || {};
-
-					JsBarcode(tempCanvas, ticket.barcode, {
-						...barcodeOpts,
-						// 以下は固定値（上書き不可）
-						format: 'CODE128',
-						text: ticket.barcode,
-						height: barcodeHeight,
-						displayValue: true,
-						margin: 0,
-					});
-
-					// 生成されたバーコード画像のサイズ
-					const generatedWidth = tempCanvas.width;
-					const generatedHeight = tempCanvas.height;
-
-					// 横幅を8割使うことを優先しつつ、縦方向は矩形に収まる範囲で調整
-					const scaleX = (barcodeWidth * 0.8) / generatedWidth;
-					const scaleY = barcodeHeight / generatedHeight;
-					const scale = Math.min(scaleX, scaleY);
-
-					// スケール後のサイズ
-					const scaledWidth = generatedWidth * scale;
-					const scaledHeight = generatedHeight * scale;
-
-					// 中央配置のための座標計算
-					const centerX = barcodeX + (barcodeWidth - scaledWidth) / 2;
-					const centerY = barcodeY + (barcodeHeight - scaledHeight) / 2;
-
-					// 生成されたバーコード画像を中央に描画
-					ctx.drawImage(tempCanvas, centerX, centerY, scaledWidth, scaledHeight);
-				} catch (error) {
-					console.error('バーコード生成エラー:', error);
-					// エラーの場合は赤い枠を表示
-					ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
-					ctx.lineWidth = 2;
-					ctx.strokeRect(barcodeX, barcodeY, barcodeWidth, barcodeHeight);
-				}
-
-				ctx.restore();
-			};
-
-			const drawQRCode = async () => {
-				if (!qrcodeBounds || !ticket.qrcode || !ticket.qrcode.trim()) return;
-
-				const qrcodeX = qrcodeBounds.x * CANVAS_SCALE;
-				const qrcodeY = qrcodeBounds.y * CANVAS_SCALE;
-				const qrcodeWidth = qrcodeBounds.width * CANVAS_SCALE;
-				const qrcodeHeight = qrcodeBounds.height * CANVAS_SCALE;
-
-				// QRコードのサイズは正方形なので、小さい方を採用
-				const qrcodeSize = Math.min(qrcodeWidth, qrcodeHeight);
-
-				// 一時的なCanvasを使ってQRコード画像を生成
-				const tempCanvas = document.createElement('canvas');
-				try {
-					await QRCode.toCanvas(tempCanvas, ticket.qrcode, {
-						width: qrcodeSize,
-						margin: 0,
-						errorCorrectionLevel: 'M',
-					});
-
-					// 中央配置のための座標計算
-					const centerX = qrcodeX + (qrcodeWidth - qrcodeSize) / 2;
-					const centerY = qrcodeY + (qrcodeHeight - qrcodeSize) / 2;
-
-					// 生成されたQRコード画像を中央に描画
-					ctx.drawImage(tempCanvas, centerX, centerY, qrcodeSize, qrcodeSize);
-				} catch (error) {
-					console.error('QRコード生成エラー:', error);
-					// エラーの場合は赤い枠を表示
-					ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
-					ctx.lineWidth = 2;
-					ctx.strokeRect(qrcodeX, qrcodeY, qrcodeWidth, qrcodeHeight);
-				}
-			};
-
 			// SVGの要素順序に従って描画（非同期処理を順次実行）
 			const drawInOrder = async () => {
 				for (const type of editableOrder) {
-					if (type === 'barcode') drawBarcode();
-					else if (type === 'qrcode') await drawQRCode();
+					if (type === 'barcode' && barcodeBounds && ticket.barcode) {
+						drawBarcodeToCanvas(ctx, barcodeBounds, ticket.barcode, templateInfo?.barcodeOptions);
+					} else if (type === 'qrcode' && qrcodeBounds && ticket.qrcode) {
+						await drawQRCodeToCanvas(ctx, qrcodeBounds, ticket.qrcode);
+					}
 				}
 			};
 

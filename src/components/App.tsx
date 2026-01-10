@@ -12,7 +12,10 @@ export const App: React.FC = () => {
 		templates: [],
 	});
 	const [templatesWithSvg, setTemplatesWithSvg] = useState<TemplateWithSvg[]>([]);
-	const [isMobile, setIsMobile] = useState(false);
+	const [isMobile, setIsMobile] = useState(() => {
+		if (typeof window === 'undefined') return false;
+		return window.matchMedia('(max-width: 768px)').matches;
+	});
 	const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
 
 	// テンプレート情報とSVGを読み込み
@@ -79,26 +82,12 @@ export const App: React.FC = () => {
 			setIsMobile(event.matches);
 		};
 
-		setIsMobile(mediaQuery.matches);
 		mediaQuery.addEventListener('change', handleMediaChange);
 
 		return () => {
 			mediaQuery.removeEventListener('change', handleMediaChange);
 		};
 	}, []);
-
-	// チケットの選択状態を同期
-	useEffect(() => {
-		if (appState.tickets.length === 0) {
-			setSelectedTicketId(null);
-			return;
-		}
-
-		const exists = appState.tickets.some((ticket) => ticket.id === selectedTicketId);
-		if (!selectedTicketId || !exists) {
-			setSelectedTicketId(appState.tickets[0].id);
-		}
-	}, [appState.tickets, selectedTicketId]);
 
 	const handleUpdateTicket = (updatedTicket: Ticket) => {
 		setAppState({
@@ -206,7 +195,7 @@ export const App: React.FC = () => {
 		}
 	};
 
-	const currentSelectedId = selectedTicketId ?? appState.tickets[0]?.id ?? '';
+	const currentSelectedId = appState.tickets.find((t) => t.id === selectedTicketId)?.id ?? appState.tickets[0]?.id ?? '';
 
 	return (
 		<div className={styles.container}>

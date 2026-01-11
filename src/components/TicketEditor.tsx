@@ -36,12 +36,6 @@ export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber
 		};
 	}, [menuOpen]);
 
-	const handleAddLine = () => {
-		const lastLine = ticket.lines[ticket.lines.length - 1];
-		const newLine = lastLine ? createLineFromTemplate(lastLine) : createDefaultLine();
-		onUpdate({ ...ticket, lines: [...ticket.lines, newLine] });
-	};
-
 	const handleInsertLineAfter = (index: number) => {
 		const referenceLine = ticket.lines[index];
 		const newLine = referenceLine ? createLineFromTemplate(referenceLine) : createDefaultLine();

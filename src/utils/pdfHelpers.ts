@@ -7,59 +7,6 @@ import type { TemplateInfo, Ticket } from '../types';
 import { PDF_CONFIG } from './constants';
 
 /**
- * チケットのCanvasからPDFに画像を追加
- * @param pdf - jsPDFインスタンス
- * @param ticketElement - チケット要素のDOM
- * @param templateInfo - テンプレート情報
- * @param currentY - 現在のY座標（cm）
- * @returns 次のY座標（cm）、エラーの場合は現在のY座標
- */
-export const addTicketToPDF = (pdf: jsPDF, ticketElement: Element, templateInfo: TemplateInfo, currentY: number): number => {
-	// Canvasを持つ要素を探す
-	const canvasElement = ticketElement.querySelector('canvas');
-	if (!canvasElement) return currentY;
-
-	// Canvasから画像を取得
-	const imgData = canvasElement.toDataURL('image/png');
-
-	// A4の幅に合わせてスケール
-	const scaledWidth = Math.min(templateInfo.width, PDF_CONFIG.WIDTH - 1);
-	const scaledHeight = (scaledWidth / templateInfo.width) * templateInfo.height;
-
-	// ページに収まるかチェック
-	const nextY = currentY + scaledHeight + PDF_CONFIG.TICKET_SPACING;
-	if (nextY > PDF_CONFIG.HEIGHT - PDF_CONFIG.MARGIN_TOP) {
-		// 次のページに
-		pdf.addPage();
-		const newY = PDF_CONFIG.MARGIN_TOP;
-
-		// PDFに画像を追加
-		const imgX = (PDF_CONFIG.WIDTH - scaledWidth) / 2; // 中央寄せ
-		pdf.addImage(imgData, 'PNG', imgX, newY, scaledWidth, scaledHeight);
-
-		// チケットの周りに極細線を描画（カットガイド）
-		pdf.setLineWidth(PDF_CONFIG.CUT_LINE_WIDTH);
-		pdf.setDrawColor(...PDF_CONFIG.CUT_LINE_COLOR);
-		pdf.rect(imgX, newY, scaledWidth, scaledHeight);
-		pdf.setLineWidth(0.2); // デフォルトに戻す
-
-		return newY + scaledHeight + PDF_CONFIG.TICKET_SPACING;
-	}
-
-	// PDFに画像を追加
-	const imgX = (PDF_CONFIG.WIDTH - scaledWidth) / 2; // 中央寄せ
-	pdf.addImage(imgData, 'PNG', imgX, currentY, scaledWidth, scaledHeight);
-
-	// チケットの周りに極細線を描画（カットガイド）
-	pdf.setLineWidth(PDF_CONFIG.CUT_LINE_WIDTH);
-	pdf.setDrawColor(...PDF_CONFIG.CUT_LINE_COLOR);
-	pdf.rect(imgX, currentY, scaledWidth, scaledHeight);
-	pdf.setLineWidth(0.2); // デフォルトに戻す
-
-	return nextY;
-};
-
-/**
  * 複数チケットからPDFを生成（動的列数対応）
  * @param pdf - jsPDFインスタンス
  * @param tickets - チケット配列

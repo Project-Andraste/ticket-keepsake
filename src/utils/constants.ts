@@ -13,10 +13,10 @@ export const CANVAS_SCALE = BASE_SCALE * SCALE_MULTIPLIER;
 
 /** PDF生成時のA4サイズと余白設定（単位: cm） */
 export const PDF_CONFIG = {
-	/** A4用紙の幅 (cm) */
-	WIDTH: 21,
-	/** A4用紙の高さ (cm) */
-	HEIGHT: 29.7,
+	/** A4用紙の幅 (cm) - 横向き */
+	WIDTH: 29.7,
+	/** A4用紙の高さ (cm) - 横向き */
+	HEIGHT: 21,
 	/** 上下マージン (cm) */
 	MARGIN_TOP: 0.5,
 	/** チケット間の間隔 (cm) */

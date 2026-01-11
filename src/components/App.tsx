@@ -153,9 +153,9 @@ export const App: React.FC = () => {
 			// テンプレート情報をマップに変換（ID→情報）
 			const templateMap = new Map(appState.templates.map((t) => [t.id, t]));
 
-			// PDF初期化（A4）
+			// PDF初期化（A4横向き）
 			const pdf = new jsPDF({
-				orientation: 'portrait',
+				orientation: 'landscape',
 				unit: 'cm',
 				format: 'a4',
 			});

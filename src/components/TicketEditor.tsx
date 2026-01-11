@@ -42,6 +42,14 @@ export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber
 		onUpdate({ ...ticket, lines: [...ticket.lines, newLine] });
 	};
 
+	const handleInsertLineAfter = (index: number) => {
+		const referenceLine = ticket.lines[index];
+		const newLine = referenceLine ? createLineFromTemplate(referenceLine) : createDefaultLine();
+		const updatedLines = [...ticket.lines];
+		updatedLines.splice(index + 1, 0, newLine);
+		onUpdate({ ...ticket, lines: updatedLines });
+	};
+
 	const handleUpdateLine = (updatedLine: TicketLine) => {
 		const updatedLines = ticket.lines.map((line) => (line.id === updatedLine.id ? updatedLine : line));
 		onUpdate({ ...ticket, lines: updatedLines });
@@ -49,6 +57,13 @@ export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber
 
 	const handleDeleteLine = (lineId: string) => {
 		const updatedLines = ticket.lines.filter((line) => line.id !== lineId);
+		onUpdate({ ...ticket, lines: updatedLines });
+	};
+
+	const handleSwapLines = (index: number) => {
+		if (index < 0 || index >= ticket.lines.length - 1) return;
+		const updatedLines = [...ticket.lines];
+		[updatedLines[index], updatedLines[index + 1]] = [updatedLines[index + 1], updatedLines[index]];
 		onUpdate({ ...ticket, lines: updatedLines });
 	};
 
@@ -198,12 +213,21 @@ export const TicketEditor: React.FC<TicketEditorProps> = ({ ticket, ticketNumber
 					</div>
 
 					<h3>テキスト編集</h3>
-					{ticket.lines.map((line) => (
-						<TicketLineEditor key={line.id} line={line} onUpdate={handleUpdateLine} onDelete={() => handleDeleteLine(line.id)} />
+					{ticket.lines.map((line, index) => (
+						<React.Fragment key={line.id}>
+							<TicketLineEditor line={line} onUpdate={handleUpdateLine} onDelete={() => handleDeleteLine(line.id)} />
+							<div className={styles.lineActions}>
+								{index < ticket.lines.length - 1 && (
+									<button onClick={() => handleSwapLines(index)} className={styles.swapButton} title="上下を入れ替え">
+										<span className="material-symbols-outlined">swap_vert</span>
+									</button>
+								)}
+								<button onClick={() => handleInsertLineAfter(index)} className={styles.insertButton} title="ここに行を挿入">
+									<span className="material-symbols-outlined">add</span>
+								</button>
+							</div>
+						</React.Fragment>
 					))}
-					<button onClick={handleAddLine} className={styles.addButton}>
-						+ 行を追加
-					</button>
 				</div>
 			</div>
 		</div>

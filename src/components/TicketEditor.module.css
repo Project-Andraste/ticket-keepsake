@@ -270,6 +270,56 @@
 	box-shadow: var(--shadow-sm);
 }
 
+.swapButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: auto;
+	padding: 0.25rem 0.5rem;
+	background: none;
+	color: var(--color-text-secondary);
+	border: none;
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+	transition: all var(--transition-base);
+	opacity: 0.5;
+}
+
+.swapButton:hover {
+	opacity: 1;
+	color: var(--color-primary);
+	transform: scale(1.1);
+}
+
+.lineActions {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0;
+	margin: 0.125rem 0;
+}
+
+.insertButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: auto;
+	padding: 0.25rem 0.5rem;
+	background: none;
+	color: var(--color-text-secondary);
+	border: none;
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+	transition: all var(--transition-base);
+	opacity: 0.5;
+}
+
+.insertButton:hover {
+	opacity: 1;
+	color: var(--color-success);
+	transform: scale(1.1);
+}
+
 .barcodeSection {
 	display: flex;
 	flex-direction: column;
